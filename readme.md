@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-# 📘 **Purchase Propensity Prediction (Customer Churn Model Using RFM & Machine Learning)**
-
-=======
 
 
 # 📘 **Purchase Propensity Prediction (Customer Churn Model Using RFM & Machine Learning)**
 
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 Predicting whether a customer will return to purchase again based on past purchase behavior.
 
 ---
@@ -18,19 +13,11 @@ The goal is to predict whether a customer will **buy again soon**, using only th
 
 We use **RFM features** (Recency, Frequency, Monetary) derived from raw transactional data and train **three ML models**:
 
-<<<<<<< HEAD
-- **Logistic Regression**
-- **Random Forest**
-- **XGBoost**
-
-This project follows a _corrected pipeline_ with **NO data leakage**, ensuring realistic and valid prediction performance.
-=======
 * **Logistic Regression**
 * **Random Forest**
 * **XGBoost**
 
 This project follows a *corrected pipeline* with **NO data leakage**, ensuring realistic and valid prediction performance.
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 
 ---
 
@@ -38,19 +25,11 @@ This project follows a *corrected pipeline* with **NO data leakage**, ensuring r
 
 Companies like Amazon, Flipkart, Swiggy, and BigBasket need to identify:
 
-<<<<<<< HEAD
-- Which customers are likely to buy again soon?
-- Which customers are becoming inactive or churning?
-- Which customers deserve special offers or retention campaigns?
-
-Raw transactional data does _not_ directly provide churn information.
-=======
 * Which customers are likely to buy again soon?
 * Which customers are becoming inactive or churning?
 * Which customers deserve special offers or retention campaigns?
 
 Raw transactional data does *not* directly provide churn information.
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 Therefore, we convert it into customer-level behavioral features using the **RFM framework**.
 
 ---
@@ -62,15 +41,6 @@ Therefore, we convert it into customer-level behavioral features using the **RFM
 
 This dataset contains:
 
-<<<<<<< HEAD
-- Invoice number
-- Product description
-- Quantity
-- Price
-- Timestamp
-- Customer ID
-- Country
-=======
 * Invoice number
 * Product description
 * Quantity
@@ -78,7 +48,6 @@ This dataset contains:
 * Timestamp
 * Customer ID
 * Country
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 
 The dataset does **not** contain a target variable.
 We create the labels ourselves.
@@ -90,13 +59,8 @@ We create the labels ourselves.
 We define a simple business rule:
 
 ```
-<<<<<<< HEAD
-BuyAgain = 1  → customer purchased within last 30 days
-BuyAgain = 0  → customer inactive recently
-=======
 BuyAgain = 1  → customer purchased within last 30 days  
 BuyAgain = 0  → customer inactive recently  
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 ```
 
 This approximates **customer churn**.
@@ -131,15 +95,9 @@ Monetary = Σ (Quantity × UnitPrice)
 
 These 3 features capture:
 
-<<<<<<< HEAD
-- Customer loyalty
-- Spending power
-- Likelihood of repeat purchase
-=======
 * Customer loyalty
 * Spending power
 * Likelihood of repeat purchase
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 
 ---
 
@@ -161,15 +119,9 @@ Recency is EXCLUDED because it directly determines the target.
 
 ### Models Trained Separately:
 
-<<<<<<< HEAD
-- Logistic Regression
-- Random Forest Classifier
-- XGBoost Classifier
-=======
 * Logistic Regression
 * Random Forest Classifier
 * XGBoost Classifier
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 
 ### Steps:
 
@@ -196,13 +148,8 @@ These scores are **realistic and valid** for churn prediction with limited featu
 
 Originally, Recency was used both:
 
-<<<<<<< HEAD
-- To create the target
-- As an input feature
-=======
 * To create the target
 * As an input feature
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 
 This caused **artificially perfect AUC (1.00)**.
 We FIXED it by removing Recency from training features.
@@ -259,17 +206,10 @@ Especially for XGBoost & Random Forest.
 
 ### ✔ Add Customer-Level Features
 
-<<<<<<< HEAD
-- Number of unique products purchased
-- Avg order value
-- Days between purchases
-- Country
-=======
 * Number of unique products purchased
 * Avg order value
 * Days between purchases
 * Country
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
 
 ### ✔ Deploy model as API (FastAPI/Flask)
 
@@ -285,8 +225,6 @@ This project demonstrates:
 ✔ Avoidance of data leakage
 ✔ Comparison of 3 ML models
 ✔ Realistic business-grade evaluation
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 131ceb80e80e616a6344888f72f75977457c6b15
+
