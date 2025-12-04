@@ -1,9 +1,4 @@
-Here is a **professional, GitHub-ready `README.md`** for your **Purchase Propensity Prediction (Churn Prediction)** project.
-This follows industry and Kaggle standards — clean, structured, and impressive to recruiters.
 
-You can **copy–paste directly into GitHub**.
-
----
 
 # 📘 **Purchase Propensity Prediction (Customer Churn Model)**
 
