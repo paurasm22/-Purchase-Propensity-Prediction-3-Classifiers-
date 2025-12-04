@@ -1,39 +1,36 @@
 
 
-# 📘 **Purchase Propensity Prediction (Customer Churn Model)**
+# 📘 **Purchase Propensity Prediction (Customer Churn Model Using RFM & Machine Learning)**
 
-Predicting whether a customer is likely to purchase again using RFM-based Machine Learning.
-
----
-
-## 📌 **Project Overview**
-
-This project builds an **industry-level machine learning model** that predicts whether a customer will **buy again in the near future**.
-It uses the **Online Retail II** dataset (UCI / Kaggle) and applies **RFM feature engineering**, a widely used technique in e-commerce and marketing analytics.
-
-This model can help businesses:
-
-- Identify customers who are likely to churn
-- Improve retention
-- Personalize marketing campaigns
-- Predict future purchases
+Predicting whether a customer will return to purchase again based on past purchase behavior.
 
 ---
 
-## 🛒 **Business Problem — Why Purchase Propensity?**
+## 📌 **Overview**
 
-E-commerce companies (Amazon, Flipkart, BigBasket, Swiggy) track customer activity to understand:
+This project builds an **industry-level customer churn model** (also known as Purchase Propensity Prediction).
+The goal is to predict whether a customer will **buy again soon**, using only their past transaction history.
 
-- **Which customers will return soon?**
-- **Which customers are inactive?**
-- **Who needs marketing offers?**
+We use **RFM features** (Recency, Frequency, Monetary) derived from raw transactional data and train **three ML models**:
 
-Raw transaction data cannot answer these questions directly, so we:
+* **Logistic Regression**
+* **Random Forest**
+* **XGBoost**
 
-1. Convert transaction-level data → customer-level features
-2. Create **Recency, Frequency, Monetary (RFM)** features
-3. Build a target variable: **BuyAgain = 1/0**
-4. Train ML models to predict future purchases
+This project follows a *corrected pipeline* with **NO data leakage**, ensuring realistic and valid prediction performance.
+
+---
+
+## 🛒 **Business Problem**
+
+Companies like Amazon, Flipkart, Swiggy, and BigBasket need to identify:
+
+* Which customers are likely to buy again soon?
+* Which customers are becoming inactive or churning?
+* Which customers deserve special offers or retention campaigns?
+
+Raw transactional data does *not* directly provide churn information.
+Therefore, we convert it into customer-level behavioral features using the **RFM framework**.
 
 ---
 
@@ -42,156 +39,144 @@ Raw transaction data cannot answer these questions directly, so we:
 **Source:** Online Retail II Dataset
 [https://www.kaggle.com/datasets/mashlyn/online-retail-ii-uci](https://www.kaggle.com/datasets/mashlyn/online-retail-ii-uci)
 
-### Columns in Raw Dataset:
+This dataset contains:
 
-- `InvoiceNo`
-- `StockCode`
-- `Description`
-- `Quantity`
-- `InvoiceDate`
-- `UnitPrice`
-- `CustomerID`
-- `Country`
+* Invoice number
+* Product description
+* Quantity
+* Price
+* Timestamp
+* Customer ID
+* Country
 
-The dataset does **not** contain a target.
-So we **create** our own target using business logic.
-
----
-
-## 🧠 **Feature Engineering (RFM)**
-
-We engineer **RFM features**, widely used in churn prediction and customer analytics.
-
-| Feature       | Meaning                    | How Calculated                       |
-| ------------- | -------------------------- | ------------------------------------ |
-| **Recency**   | Days since last purchase   | `snapshot_date − last_purchase_date` |
-| **Frequency** | Number of unique purchases | Count of unique invoices             |
-| **Monetary**  | Total money spent          | Σ (Quantity × UnitPrice)             |
-
-### 🔹 Why RFM?
-
-It converts raw transaction data into **behavioral patterns**, which ML models can understand.
+The dataset does **not** contain a target variable.
+We create the labels ourselves.
 
 ---
 
-## 🎯 **Target Variable: BuyAgain**
+# 🎯 **Target Variable: BuyAgain**
 
-We define:
+We define a simple business rule:
 
 ```
-BuyAgain = 1  → if customer bought in last 30 days
-BuyAgain = 0  → otherwise
+BuyAgain = 1  → customer purchased within last 30 days  
+BuyAgain = 0  → customer inactive recently  
 ```
 
-This is equivalent to a **churn model**, but positive class means “likely to purchase again”.
+This approximates **customer churn**.
+
+✔ **Recency is used ONLY for target creation**
+❌ **Recency is NOT used as a feature (fixed leakage)**
+
+This ensures the ML model cannot cheat.
 
 ---
 
-## 🏗️ **ML Pipeline**
+# 🧠 **Feature Engineering (RFM)**
 
-We trained **three separate models**, compared them, and selected the best one.
+The following customer-level features are extracted:
 
-### Models Used:
+### ✔ **Recency**
 
-- **Logistic Regression** (Baseline)
-- **Random Forest Classifier**
-- **XGBoost Classifier** ⭐ _(Best performing)_
+Days since last purchase.
+Used **only to build the target**, NOT as an ML feature.
 
-### Preprocessing:
+### ✔ **Frequency**
 
-- Scaling numerical features
-- Train/test split
-- Evaluation on AUC & classification metrics
+Number of unique invoices → number of purchase occasions.
 
----
+### ✔ **Monetary**
 
-## 📊 **Model Performance**
+Total money spent by the customer:
 
-| Model               | Metric  | Score             |
-| ------------------- | ------- | ----------------- |
-| Logistic Regression | AUC     | ~0.70             |
-| Random Forest       | AUC     | ~0.75             |
-| **XGBoost**         | **AUC** | **Best (~0.80+)** |
+```
+Monetary = Σ (Quantity × UnitPrice)
+```
 
-XGBoost consistently outperformed others in:
+These 3 features capture:
 
-- Recall
-- Precision for active customers
-- AUC score
+* Customer loyalty
+* Spending power
+* Likelihood of repeat purchase
 
 ---
 
-## 🧪 **Code Structure**
+# 🧩 **Final ML Features (Leakage-Free)**
+
+Only:
+
+```
+Frequency, Monetary
+```
+
+are used as ML inputs.
+
+Recency is EXCLUDED because it directly determines the target.
+
+---
+
+# 🛠️ **Modeling Pipeline**
+
+### Models Trained Separately:
+
+* Logistic Regression
+* Random Forest Classifier
+* XGBoost Classifier
+
+### Steps:
+
+1. Preprocessing using StandardScaler
+2. Train/test split with stratification
+3. Model training
+4. Evaluation using AUC, classification report, confusion matrix
+
+---
+
+# 📊 **Model Performance (Leakage Fixed)**
+
+| Model                   | AUC Score |
+| ----------------------- | --------- |
+| **Logistic Regression** | **0.737** |
+| Random Forest           | 0.672     |
+| **XGBoost**             | **0.742** |
+
+These scores are **realistic and valid** for churn prediction with limited features.
+
+---
+
+# 📜 **Key Learning: Fixing Data Leakage**
+
+Originally, Recency was used both:
+
+* To create the target
+* As an input feature
+
+This caused **artificially perfect AUC (1.00)**.
+We FIXED it by removing Recency from training features.
+
+This brings the model to realistic industry performance and demonstrates correct ML practices.
+
+---
+
+# 📁 **Project Structure**
 
 ```
 ├── data/
 │   └── online_retail_II.csv
 ├── notebooks/
-│   ├── RFM_feature_engineering.ipynb
-│   ├── churn_model_training.ipynb
+│   ├── 01_RFM_feature_engineering.ipynb
+│   ├── 02_churn_model_training.ipynb
 ├── src/
 │   ├── create_rfm.py
 │   ├── train_models.py
-│   └── evaluate.py
-└── README.md
+│   └── utils.py
+├── README.md
+└── requirements.txt
 ```
 
 ---
 
-## 🧩 **Key Python Steps**
-
-### 1. Create TotalPrice
-
-```python
-df['TotalPrice'] = df['Quantity'] * df['UnitPrice']
-```
-
-### 2. Create Recency
-
-```python
-snapshot_date = df['InvoiceDate'].max() + pd.Timedelta(days=1)
-last_purchase = df.groupby('CustomerID')['InvoiceDate'].max()
-recency = (snapshot_date - last_purchase).dt.days
-```
-
-### 3. Create Frequency
-
-```python
-frequency = df.groupby('CustomerID')['InvoiceNo'].nunique()
-```
-
-### 4. Create Monetary
-
-```python
-monetary = df.groupby('CustomerID')['TotalPrice'].sum()
-```
-
-### 5. Build Final Dataset
-
-```python
-rfm = pd.DataFrame({'Recency': recency,
-                    'Frequency': frequency,
-                    'Monetary': monetary})
-```
-
-### 6. Target Variable
-
-```python
-rfm['BuyAgain'] = (rfm['Recency'] < 30).astype(int)
-```
-
-### 7. Train ML Models
-
-(Example: XGBoost)
-
-```python
-xgb = XGBClassifier(eval_metric='logloss')
-xgb.fit(X_train, y_train)
-```
-
----
-
-## 🚀 **How to Run**
+# ▶️ **How to Run**
 
 ```bash
 pip install -r requirements.txt
@@ -199,28 +184,46 @@ python src/create_rfm.py
 python src/train_models.py
 ```
 
-Or open the notebooks inside `/notebooks`.
+or open the notebooks in Jupyter/Colab.
 
 ---
 
-## 🧩 **Potential Improvements**
+# 🚀 **Future Improvements**
 
-- Hyperparameter tuning
-- Try LightGBM
-- Use customer segmentation (KMeans)
-- Add rolling features or inter-purchase gaps
-- Deploy as API (FastAPI / Flask)
+Here are enhancements that can increase performance:
+
+### ✔ Add Recency Groups (safe, no leakage)
+
+Bin Recency into categories instead of using raw values.
+
+### ✔ Use Interpurchase Gap Features
+
+More powerful than simple RFM.
+
+### ✔ Perform Hyperparameter Tuning
+
+Especially for XGBoost & Random Forest.
+
+### ✔ Add Customer-Level Features
+
+* Number of unique products purchased
+* Avg order value
+* Days between purchases
+* Country
+
+### ✔ Deploy model as API (FastAPI/Flask)
 
 ---
 
-## 🏁 **Conclusion**
+# 🏁 **Conclusion**
 
 This project demonstrates:
 
-✔ Real-world **churn prediction** using RFM
-✔ Transition from **raw transaction data → ML-ready dataset**
-✔ Feature engineering that mirrors industry standards
-✔ Comparison of 3 classification models
-✔ Business insight into customer retention
+✔ End-to-end ML pipeline using transaction data
+✔ Correct customer-level feature engineering (RFM)
+✔ Proper target creation for churn prediction
+✔ Avoidance of data leakage
+✔ Comparison of 3 ML models
+✔ Realistic business-grade evaluation
 
-!
+
